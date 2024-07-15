@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Hub</title>
+    <style>
+         body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            overflow-y: scroll;
+        }
+
+        header {
+            background-color: #6c63ff;
+            color: #fff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            margin-left: 25px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        main {
+            padding: 30px;
+        }
+
+        .home-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #6c63ff 0%, #c9c7ff 100%);
+            color: #fff;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .home-section h1 {
+            font-size: 3em;
+            margin: 0;
+        }
+
+        .home-section p {
+            font-size: 1.3em;
+        }
+
+        .discover-section, .write-section, .profile-section {
+            margin-top: 20px;
+			color: #fff;
+        }
+
+        .story-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .story-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            width: calc(33.333% - 40px);
+            box-sizing: border-box;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .story-card h3 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #6c63ff;
+        }
+
+        .story-card p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #6c63ff;
+            color: #fff;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        input, textarea {
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #f9f9f9;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #999;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #6c63ff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #534bc1;
+        }
+
+        .story-details {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 30px auto;
+        }
+
+        .story-details h2 {
+            font-size: 2em;
+            color: #6c63ff;
+        }
+
+        .back-button, .delete-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #6c63ff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover, .delete-button:hover {
+            background-color: #534bc1;
+        }
+
+        .delete-button {
+            background-color: #ff6c6c;
+        }
+
+        .delete-button:hover {
+            background-color: #d15656;
+        }
+		textarea {
+    margin-top: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: #f9f9f9;
+    height: 200px; /* Adjust height as needed */
+}
+
+    </style>
+</head>
+<body background="wattpad.jpg">
+    <header>
+       <div class="logo">Story Hub</div>
+        <nav>
+            <ul>
+                <li><a id="login-link" href="#login" onclick="showSection('login')">Login</a></li>
+                <li><a href="#home" onclick="showSection('home')">Home</a></li>
+                <li><a href="#discover" onclick="showSection('discover')">Discover</a></li>
+                <li><a id="write-nav" href="#write" onclick="showSection('write')" style="display: none;">Write</a></li>
+                <li><a id="profile-nav" href="#profile" onclick="showSection('profile')" style="display: none;">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+         <section id="home" class="home-section">
+            <h1>Welcome to Story Hub</h1>
+            <p>Read and write amazing stories.</p>
+        </section>
+
+        <section id="login" style="display:none;">
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="login-username">Username:</label>
+                <input type="text" id="login-username" name="username" required>
+
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="password" required>
+
+                <button type="submit">Login</button>
+                <p>Don't have an account? <a href="#signup" onclick="showSection('signup')">Sign up here</a>.</p>
+            </form>
+        </section>
+
+        <section id="signup" style="display:none;">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <label for="signup-username">Username:</label>
+                <input type="text" id="signup-username" name="username" required>
+
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" name="password" required>
+
+                <button type="submit">Sign Up</button>
+                <p>Already have an account? <a href="#login" onclick="showSection('login')">Login here</a>.</p>
+            </form>
+        </section>
+
+
+        <section id="discover" class="discover-section" style="display:none;">
+            <h2>Discover Stories</h2>
+            <div class="story-list" id="story-list">
+                <!-- Stories will be dynamically added here -->
+            </div>
+        </section>
+		
+
+		<section id="story-details" class="story-details" style="display:none;">
+          <h2>Story Details</h2>
+          <div id="story-details-content">
+              <!-- Story details will be populated here by JavaScript -->
+          </div>
+          <button class="back-button" onclick="showSection('discover')">Back to Discover</button>
+        </section>
+		
+
+
+
+         <section id="write" class="write-section" style="display:none;">
+            <h2>Write a Story</h2>
+            <form id="write-form">
+                <label for="story-title">Title:</label>
+                <input type="text" id="story-title" name="title" required>
+
+                <label for="story-content">Story:</label>
+                <textarea id="story-content" name="content" rows="10" required></textarea>
+
+
+                <button type="submit">Publish Story</button>
+            </form>
+        </section>
+
+   <section id="profile" class="profile-section" style="display:none;">
+      <h2>Profile</h2>
+       <div id="profile-details">
+        <!-- Profile details will be populated here by JavaScript -->
+       </div>
+           <button id="edit-profile-btn" onclick="toggleEditProfileForm()">Edit Profile</button>
+              <form id="edit-profile-form" style="display: none;">
+              <label for="edit-username">Username:</label>
+           <input type="text" id="edit-username" name="username" required>
+
+        <!-- Add more fields for other profile details as needed -->
+
+        <button type="submit">Save</button>
+        <button type="button" onclick="cancelEditProfile()">Cancel</button>
+      </form>
+      <button id="logout-btn" style="display: none;">Logout</button>
+    </section>
+
+    </main>
+
+    <footer>
+       &copy; 2024 Story Hub. All rights reserved.
+    </footer>
+
+    <script>
+        // Function to load users from localStorage or initialize if not present
+        function loadUsers() {
+            let storedUsers = localStorage.getItem('users');
+            if (storedUsers) {
+                return JSON.parse(storedUsers);
+            } else {
+                return [
+                    { username: 'user', password: 'password' } // Default user for demonstration
+                ];
+            }
+        }
+
+        // Function to save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        let users = loadUsers(); // Load users from localStorage or initialize
+
+        let currentUser = null; // Assume no user logged in initially
+
+        // Function to switch sections and update navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show the selected section
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Update navigation links based on login status
+            const isLoggedIn = (currentUser !== null);
+            document.getElementById('login-link').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('logout-btn').style.display = isLoggedIn ? 'block' : 'none';
+            document.getElementById('write-nav').style.display = isLoggedIn ? 'block' : 'none';
+            document.getElementById('profile-nav').style.display = isLoggedIn ? 'block' : 'none';
+
+            if (sectionId === 'discover') {
+                updateStoryList(); // Update story list when switching to Discover section
+            }
+        }
+
+        // Function to handle login form submission
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            // Perform login validation (dummy logic)
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user.username;
+                showSection('home'); // Redirect to home after login
+                document.getElementById('login-form').reset();
+                saveUsers(users); // Save updated users to localStorage
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        });
+
+        // Function to handle signup form submission
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            // Perform signup logic (dummy logic)
+            const existingUser = users.find(u => u.username === username);
+            if (existingUser) {
+                alert('Username already exists. Please choose a different username.');
+            } else {
+                users.push({ username, password });
+                saveUsers(users); // Save updated users to localStorage
+                alert('Signed up successfully.');
+                document.getElementById('signup-form').reset();
+                showSection('login'); // Redirect to login after signup
+            }
+        });
+
+        // Function to handle logout button click
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            currentUser = null;
+            saveUsers(users); // Save users (in this case, just to clear currentUser)
+            showSection('login'); // Redirect to login after logout
+        });
+
+        // Function to handle write form submission
+document.getElementById('write-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const title = document.getElementById('story-title').value;
+    const content = document.getElementById('story-content').value;
+
+    // Create a new story object
+    const newStory = {
+        title: title,
+        content: content,
+        author: currentUser // Assuming currentUser is set after login
+    };
+
+    // Store the new story in localStorage
+    let stories = JSON.parse(localStorage.getItem('stories')) || [];
+    stories.push(newStory);
+    localStorage.setItem('stories', JSON.stringify(stories));
+
+    // Add the new story to the list dynamically
+    addStoryToList(newStory);
+
+    // Reset form after submission
+    document.getElementById('write-form').reset();
+});
+
+// Function to add a story to the list dynamically
+function addStoryToList(story) {
+    const storyList = document.getElementById('story-list');
+    const storyCard = document.createElement('div');
+    storyCard.classList.add('story-card');
+    storyCard.innerHTML = `
+        <h3>${story.title}</h3>
+        <p>${story.content}</p>
+        <p><strong>Author:</strong> ${story.author}</p>
+    `;
+
+    // Check if current user is the author of the story
+    if (currentUser && story.author === currentUser) {
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            deleteStory(story); // Call function to delete story
+        });
+        storyCard.appendChild(deleteButton);
+    }
+
+    storyList.appendChild(storyCard);
+}
+
+// Function to delete a story
+function deleteStory(story) {
+    // Implement story deletion logic here
+    // This example assumes stories are stored in localStorage as an array
+    let stories = JSON.parse(localStorage.getItem('stories')) || [];
+    stories = stories.filter(s => !(s.title === story.title && s.content === story.content && s.author === story.author));
+    localStorage.setItem('stories', JSON.stringify(stories));
+    updateStoryList(); // Update displayed list after deletion
+}
+
+// Function to update the story list in the Discover section
+function updateStoryList() {
+    const storyList = document.getElementById('story-list');
+    storyList.innerHTML = ''; // Clear existing list
+
+    let stories = JSON.parse(localStorage.getItem('stories')) || [];
+    stories.forEach(story => {
+        addStoryToList(story); // Add each story to the list
+    });
+}
+
+// Initial setup: Show login section by default
+showSection('login');
+// Function to handle story card click and display story details
+function showStoryDetails(story) {
+    const storyDetailsSection = document.getElementById('story-details');
+    const storyDetailsContent = document.getElementById('story-details-content');
+
+    // Populate story details
+    storyDetailsContent.innerHTML = `
+        <h2>${story.title}</h2>
+        <p>${story.content}</p>
+        <p><strong>Author:</strong> ${story.author}</p>
+    `;
+
+    // Show the story details section
+    storyDetailsSection.style.display = 'block';
+}
+
+// Function to add a story to the list dynamically
+function addStoryToList(story) {
+    const storyList = document.getElementById('story-list');
+    const storyCard = document.createElement('div');
+    storyCard.classList.add('story-card');
+    storyCard.innerHTML = `
+        <h3>${story.title}</h3>
+        <p>${story.content}</p>
+        <p><strong>Author:</strong> ${story.author}</p>
+    `;
+
+    // Check if current user is the author of the story
+    if (currentUser && story.author === currentUser) {
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            deleteStory(story); // Call function to delete story
+        });
+        storyCard.appendChild(deleteButton);
+    }
+
+    // Add click event listener to show story details on click
+    storyCard.addEventListener('click', function() {
+        showStoryDetails(story);
+    });
+
+    storyList.appendChild(storyCard);
+}
+
+// Function to delete a story
+function deleteStory(story) {
+    // Implement story deletion logic here
+    // This example assumes stories are stored in localStorage as an array
+    let stories = JSON.parse(localStorage.getItem('stories')) || [];
+    stories = stories.filter(s => !(s.title === story.title && s.content === story.content && s.author === story.author));
+    localStorage.setItem('stories', JSON.stringify(stories));
+    updateStoryList(); // Update displayed list after deletion
+}
+
+// Function to update the story list in the Discover section
+function updateStoryList() {
+    const storyList = document.getElementById('story-list');
+    storyList.innerHTML = ''; // Clear existing list
+
+    let stories = JSON.parse(localStorage.getItem('stories')) || [];
+    stories.forEach(story => {
+        addStoryToList(story); // Add each story to the list
+    });
+}
+
+// Initial setup: Show login section by default
+showSection('login');
+// Function to handle comment form submission
+document.getElementById('comment-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const commentText = document.getElementById('comment-text').value;
+
+    // Create a new comment element
+    const comment = document.createElement('div');
+    comment.classList.add('comment');
+    comment.innerHTML = `
+        <img src="avatar.jpg" alt="User Avatar">
+        <div class="comment-text">
+            <h4>${currentUser}</h4>
+            <p>${commentText}</p>
+        </div>
+    `;
+
+    // Add reply button
+    const replyButton = document.createElement('button');
+    replyButton.textContent = 'Reply';
+    replyButton.classList.add('reply');
+    replyButton.addEventListener('click', function() {
+        showReplyForm(comment);
+    });
+    comment.appendChild(replyButton);
+
+    // Add comment to the comments section
+    const commentsSection = document.getElementById('comments');
+    commentsSection.appendChild(comment);
+
+    // Clear comment textarea
+    document.getElementById('comment-text').value = '';
+});
+
+// Function to show reply form on clicking reply button
+function showReplyForm(parentComment) {
+    const replyForm = document.createElement('form');
+    replyForm.classList.add('reply-form');
+    replyForm.innerHTML = `
+        <textarea placeholder="Reply..." rows="2"></textarea>
+        <button type="submit">Post Reply</button>
+    `;
+
+    // Handle reply form submission
+    replyForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const replyText = replyForm.querySelector('textarea').value;
+
+        // Create a new reply element
+        const reply = document.createElement('div');
+        reply.classList.add('comment', 'reply');
+        reply.innerHTML = `
+            <img src="avatar.jpg" alt="User Avatar">
+            <div class="comment-text">
+                <h4>${currentUser}</h4>
+                <p>${replyText}</p>
+            </div>
+        `;
+
+        // Add reply to the parent comment
+        parentComment.appendChild(reply);
+
+        // Clear reply form textarea
+        replyForm.querySelector('textarea').value = '';
+    });
+
+    // Replace reply button with reply form
+    const replyButton = parentComment.querySelector('.reply');
+    parentComment.replaceChild(replyForm, replyButton);
+}
+
+		
+    </script>
+</body>
+</html>

@@ -329,6 +329,7 @@ align-items:center;
     <button onclick="showSection('write')">Write</button>
     <button onclick="showSection('discover')">Discover</button>
     <button onclick="showSection('profile')">Profile</button>
+	<button onclick="showSection('drafts'); showDraft()">My Draft</button>
 </nav>
 
 <!-- HOME -->
@@ -344,6 +345,12 @@ align-items:center;
 		<button onclick="saveDraft()">Save Draft</button>
         <button onclick="clearDraft()">Clear</button>
     </div>
+</div>
+
+<!-- MY DRAFT-->
+<div id="drafts" class="section">
+    <h2 style="color:white;">My Draft</h2>
+    <div id="draftBox"></div>
 </div>
 
 <!-- DISCOVER -->
@@ -393,6 +400,7 @@ function login(){
     app.style.display="block";
 
     me.innerText = current;
+	loadDraft();
     render();
     updateProfile();
 }
@@ -409,11 +417,18 @@ function showSection(id) {
     });
 
     const active = document.getElementById(id);
+    if (!active) return; // safety check
+
     active.style.display = "block";
 
     setTimeout(() => {
         active.classList.add("active");
     }, 50);
+
+    // auto trigger special sections
+    if (id === "drafts") {
+        showDraft();
+    }
 }
 
 function post(){
@@ -501,24 +516,87 @@ function setActiveTab(tabName) {
     document.getElementById(tabName + "Btn").classList.add("active");
 }
 function saveDraft() {
-    const text = document.querySelector("#write textarea").value;
-    localStorage.setItem("draft", text);
-    alert("Draft saved!");
+    const text = document.getElementById("text").value;
+    if (!text.trim()) return;
+
+    let key = current + "_drafts";
+
+    // get existing drafts
+    let drafts = JSON.parse(localStorage.getItem(key) || "[]");
+
+    // add new draft
+    drafts.push({
+        id: Date.now(),
+        text: text
+    });
+
+    // save back
+    localStorage.setItem(key, JSON.stringify(drafts));
+
+    // clear editor
+    document.getElementById("text").value = "";
+
+    showDraft();
 }
 
-function loadDraft() {
-    const draft = localStorage.getItem("draft");
-    if (draft) {
-        document.querySelector("#write textarea").value = draft;
+function showDraft() {
+    const box = document.getElementById("draftBox");
+
+    let drafts = JSON.parse(localStorage.getItem(current + "_drafts") || "[]");
+
+    if (drafts.length === 0) {
+        box.innerHTML = "<p style='color:white;'>No drafts yet</p>";
+        return;
     }
-}
 
-function clearDraft() {
-    document.querySelector("#write textarea").value = "";
-    localStorage.removeItem("draft");
+    box.innerHTML = "";
+
+    drafts.forEach(d => {
+        let div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML = `
+            <div>${d.text}</div>
+            <br>
+            <button onclick="editDraft(${d.id})">Edit</button>
+            <button onclick="deleteDraft(${d.id})">Delete</button>
+        `;
+
+        box.appendChild(div);
+    });
+}
+function editDraft(id) {
+    let key = current + "_drafts";
+    let drafts = JSON.parse(localStorage.getItem(key) || "[]");
+
+    let draft = drafts.find(d => d.id === id);
+    if (!draft) return;
+
+    // put text back in editor
+    document.getElementById("text").value = draft.text;
+
+    // remove from drafts list
+    drafts = drafts.filter(d => d.id !== id);
+
+    localStorage.setItem(key, JSON.stringify(drafts));
+
+    showDraft();
+    showSection("write");
+}
+function deleteDraft(id) {
+    let key = current + "_drafts";
+
+    let drafts = JSON.parse(localStorage.getItem(key) || "[]");
+
+    drafts = drafts.filter(d => d.id !== id);
+
+    localStorage.setItem(key, JSON.stringify(drafts));
+
+    showDraft();
 }
 window.addEventListener("load", loadDraft);
 </script>
 
 </body>
 </html>
+
